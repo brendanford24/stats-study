@@ -6,7 +6,6 @@
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
-  
 </style>
 
-# Statistics {.unnumbered .hidden}
+# Count models {.unnumbered .hidden}

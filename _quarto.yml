@@ -11,7 +11,12 @@ book:
   # cover-image: pics/manta_ray.gif
   chapters:
     - index.qmd
-    - intro.qmd
+    - ch/1_intro.qmd
+    - ch/2_poisson.qmd
+    - ch/3_extra_poisson_dispersion.qmd
+    - ch/4_negbin.qmd
+    - ch/5_genpois.qmd
+         
     - summary.qmd
     - references.qmd
   # margin-header: "![](pics/manta_ray.gif)"

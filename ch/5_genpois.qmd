@@ -1,0 +1,133 @@
+# Generalized Poisson {#sec-GenPois}
+
+When there is overdispersion due to latent heterogeneity, people often assume a gamma mixture of poisson variables. Suppose that is $\varepsilon_i$ is an unobserved individual heterogeneity factor (e.g. an unobserved covariate), with $\exp(\varepsilon)$ following a gamma distribution with mean 1 (i.e. single parameter gamma distribution) and variance $\alpha$. Now assume the response vector follows a modification of the Poisson model with mean $\lambda^*_i = \exp(\pmb x_i \pmb\beta + \varepsilon_i)$. The result is the well-known negative binomial regression model where $\alpha$ is a nonnegative parameter, indicating the degree of overdispersion.
+
+As alternative to the negative binomial for overdispersed counts we may assume the response follows a generalized poisson (GP) distribution. Originally developed by Consul and Jain (1973), it has since undergone various modifications (the *restricted generalized Poisson*, three parameterizations of a *hybrid generalized Poisson*, etc).
+
+The generalized poisson model is similar to the negative binomial in that it incorporates an extra heterogeneity parameter.^[Heterogeneity parameter *a.k.a.* overdispersion parameter, dispersion parameter.] However, whereas the negative binomial hetergeneity parameter ($\alpha$) is based on the single-parameter gamma distribution (NB2 parameterization; @sec-NB2), the heterogeneity parameter employed by the generalized poisson is based on the lognormal distribution.^[This type of poisson-lognormal mixture model was first used in species abundance literature (Bulmer ,1974). See Janardan et al (1979) for biological applications of the generalized (Lagrangian) poisson distribution as well as some biological interpretations of the hetergeneity parameter. Other examples are given in Consul (1989).] This allows modelling of both overdispersed ?*and* underdispersed data?.
+
+There are several different models that are referred to as generalized poisson models. 
+
+---
+
+The standard parameterization comes from Consul (1989) (detailed in Consul and Famoye, 1992; shown to be a poisson mixture in Joe and Zhu, 2005). In Consul and Famoye (1992) the model is specified to deal with underdispersion to some degree, however it seems like this parameterization has been restricted to overdispersion only ($\delta > 0$) in later works (see Joe and Zhu, 2005).
+
+<!-- **CREATE MULTIPLE TABS: ONE FOR DISTRIBUTION DEFINITION AND ONE FOR THE MODEL FORM (see Consul and Famoye 1992)** -->
+
+$$
+\boxed{
+  \begin{align}
+    \textbf{Generalized poisson} & \text{ (Consul, 1989)}: \quad 
+    y_i \sim \mathrm{GenPois}(\theta_i, \delta)
+    \\\\
+    P[Y = y_i | \pmb x_i, \pmb\beta]
+      &= \theta_i(\theta_i + \delta y_i)^{y_i - 1}
+         \frac{\exp(-\theta_i-\delta y_i)}
+              {y!} \\ \\
+    E[Y_i|\theta_i, \delta] 
+      &= \mu_i = \frac{\theta_i}
+                      {1-\delta} \\ \\
+    \mathrm{Var}(Y_i | \theta_i, \delta)
+      &= \frac{\theta_i}
+              {(1-\delta)^3} \\ \\
+      &= \frac{1}
+              {(1-\delta)^2} E[y_i] \\ \\
+      &= \phi E[y_i]\\ \\
+  \text{ for } \; y_i \in \mathbb{Z}^{0+}, \;\; \theta_i > 0, \;\; & \max(-1, -\theta_i/4) < \delta < 1, \; \text{and}\\
+  \text{overdispersion parame}&\text{ter } \phi = 1/(1-\delta)^2.\quad
+  \end{align}
+}
+$$ {#eq-GP1Dist}
+
+When $\delta = 0 \;\Leftrightarrow\; \phi = 1$ the GP reduces to the nested Poisson distribution with parameter $\theta_i$. When $\delta < 0 \;\Leftrightarrow\; \phi < 1$ we have underdispersion and for $\delta > 0 \;\Leftrightarrow\; \phi > 1$ we have overdispersion.
+
+Consol (1989) introduce covariates into a regression model based on the GP distirbution via 
+
+$$
+E[y_i] = \frac{\theta_i}{1-\delta} = \mu_i = \exp(\pmb x_i\pmb\beta)
+$$
+
+Under this parameterization the corresponding GP regression model is obtained by subbing $\theta_i = (1-\delta)\mu_i$ into 
+@eq-GP1Dist to get
+$$
+P(Y = y_i | \pmb x_i, \pmb \beta, \delta) 
+  = \frac{(1-\delta)\mu_i \big[(1 - \delta)\mu_i + \delta y_i \big]^{y_i - 1} \exp\big(-(1-\delta)\mu_i - \delta y_i \big)}{y!}
+$$
+
+for $\mu_i > 0$, $\max(-1, -\theta_i/4) < \delta \leq 1$ and $E[y_i] = \mu_i = \exp(\pmb x_i\pmb\beta)$ (Yang, 2007).
+
+<!-- See Yang (2007) eq6 -->
+
+
+
+
+<!-- In Consul and Famoye (1992) they use $\lambda$ as the overdispersion parameter and $\theta = \exp(\pmb x_i\pmb\beta)$. In Hardin and Hilbe (2018) they use $\delta$ for the overdispersion parameter. Here we will use $\lambda_i = \mu_i = \exp(\pmb x_i\pmb\beta)$ and $\alpha$ for the overdispersion parameter.  -->
+
+::: {.callout-warning appearance="simple" collapse="true"}
+### Wrong generalized poisson definition in Hilbe (2011)?
+
+The below is from Hilbe (2011). Note that this is a different definition to that used in Consul and Famoye (1992), Joe and Zhu (2005), and Hardin and Hilbe (2018). Is this an error? Perhaps there is equality between the two and I just don't see it. I will steer clear of the Hilbe (2011) definition.
+
+![](resources/potential_error_Hilbe_2011_NegBinReg_at_genpoisson_definition.PNG)
+
+:::
+
+The value $\theta$ serves as the heterogeneity parameter, analogous to the negative binomial heterogeneity parameter $\alpha$, and reflects the amount of 'extra-poisson' dispersion in the data. As with the NB $\alpha$, as $\theta$ approaches zero this parameterization reduces to the Poisson distribution.
+
+---
+
+Another well-known parameterization is given in Famoye and Singh (2006) and Winkelmann (2008).
+
+$$
+\boxed{
+  \begin{align}
+    \textbf{Generalized poisson} & \text{ - Famoye and Singh (2006) parameterization} \\ \\
+    P[Y = y_i | \mu_i, \alpha]
+      &= \left(
+            \frac{\mu_i}
+                 {\alpha\mu_i + 1}
+          \right)^{y_i}
+          \left(
+            \frac{(\alpha y_i + 1)^{y_i - 1}}
+                 {y!}
+          \right)
+          \exp\left(
+            \frac{-\mu_i(\alpha y_i + 1)}
+                 {\alpha \mu_i + 1}
+          \right)
+    \\ \\
+    E[y_i|\mu_i, \alpha] 
+      &= \mu_i \\ \\
+    \mathrm{Var}[y_i | \mu_i, \alpha]
+      &= \mu_i(1 - \alpha\mu_i)^2 \\ \\
+  \text{for heterogeneity }&\text{parameter } \alpha.
+  \end{align}
+}
+$$
+
+for heterogeneity parameter $\alpha$. Again, as $\alpha \to 0$, this generalized Poisson distribution is reduced to the Poisson.
+
+
+
+## Summary
+
+```{r eval=F}
+col_names <- c(
+  "Family",
+  "Parameterization", 
+  "Heterogeneity parameter",
+  "Nested models",
+  "Extra-poisson dispersion"
+)
+tab <- data.frame() |>  
+  rbind(c(
+    "Negative Binomial", 
+    "NB2", 
+    "\\alpha", 
+    "Poisson ($\\alpha = 0)", 
+    ""
+  )) 
+  # Add more rows here
+
+colnames(tab) <- col_names
+```

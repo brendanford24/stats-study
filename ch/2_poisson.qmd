@@ -1,0 +1,13 @@
+# Poisson
+
+For a regression model $Y = \pmb\beta\pmb X + \epsilon_i$, the canonical likelihood function when $Y$ is a count variable is the Poisson ($Y \sim Poisson(\lambda)$), with probability mass function
+
+$$
+P(Y = y_i |\pmb x_i) = 
+  \frac{\exp(-\lambda_i)\lambda_i^{y_i}}
+       {\Gamma(1 + y_i)}
+$$
+
+for $E(y_i|\pmb x_i) = \lambda_i = \mu_i = \exp(\pmb \beta \pmb x_i)$ and $Var(y_i | \pmb x_i) = \lambda_i$. The signature features of the Poisson model are its loglinear conditional mean function $\log E(y_i|\pmb x_i) = \log \mu_i = \pmb \beta \pmb x_i$ (the log of the conditional mean is linear in the parameters), and equal mean and variance $Var(y_i | \pmb x_i) = \lambda_i$ which is also called equidispersion since the dispersion $\frac{\text{variance}}{\text{mean}} = 1$.
+
+However, Poisson models tend to be a poor fit in many ecological contexts due to overdispersion. Overdispersion arises naturally due to heterogeneity (e.g. as fish cluster in preferred habitats; as transient schooling species lead to some very large abundance observations), dependence between observations due to spatial and temporal autocorrelation (e.g. dependence of fish abundance within sites and years), and zero-inflation. It may also be due to artifacts of sampling and not measuring or controlling for key covariates influencing local patterns of fish abundance (e.g. time of day, tides, etc). The most popular distribution for overdispersed counts in ecological studies is the negative binomial (NB), which has been shown to appropriately model overdispersion in a range of ecological contexts (Stoklosa et al, 2022).

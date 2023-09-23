@@ -1,0 +1,192 @@
+# Negative binomial
+
+## Negative Binomial (NB-2) {#sec-NB2}
+
+The derivation on the negative binomial NB2 is usually illustrated as a Poisson model with gamma heterogeneity, where the gamma noise has a mean of 1.^[The mean of one is for technical reasons, see Hilbe (2007) s13.2.1.] An intuitive way to think of this is through the introduction of latent heterogeneity^[Latent *def (adjective)*  something which is not directly observed but is instead inferred.] (an unobserved effect) to the mean of the Poisson model (Greene, 2008).
+
+Recall our Poisson model of $y_i \sim \mathrm{poisson}(\lambda_i)$ for $\lambda_i = \mu_i = \exp(\pmb x_i \pmb\beta)$^[The use of the exponential function in $\mu_i = \exp(\pmb x_i \pmb\beta)$ restricts the outcomes to positive counts.] which has the property of equidispersion since $E[y_i | \pmb x_i] = \mathrm{Var}[y_i | \pmb x_i] = \lambda_i$. We will alter this poisson model to account for extra variance in our data, i.e. overdispersion $\mathrm{Var}[y_i | \pmb x_i] > E[y_i | \pmb x_i]$. We can imagine this extra variance stemming from observation-level deviations from the mean dues to an unobserved effect; we will refer to these deviations as latent heterogeneity. Let $\varepsilon$ represent this latent heterogeneity, then we can re-express the mean as $\mu_i^* = \exp(\pmb x_i \pmb\beta + \varepsilon_i)$. Here $\varepsilon$ is its own random variable to which we will assign a probability distribution. Now define $h_i = \exp(\varepsilon_i)$ such that
+
+$$
+y_i \sim \mathrm{poisson}(h_i\lambda_i)
+$$ 
+
+This is a common step in the derivation of models for overdispersed counts, where the assumed distribution of $h_i$ leads to different models and parameterizations. For the negative binomial (NB2) model we assume that $h_i$ follows a single-parameter gamma distribution 
+
+$$
+h_i \sim \mathrm{gamma}(k = \theta, \; \theta)
+$$
+
+with mean 1 and variance $\alpha = 1/\theta$. The probability density of $h_i$ is then
+
+$$
+f(h_i) = 
+  \frac{\theta^\theta \exp(-\theta h_i)h_i^{\theta - 1}}
+       {\Gamma(\theta)}
+  \; ;\;\; h_i \geq 0 ,\; \theta > 0 \;.
+$$
+
+To put this in mathematical terms, the negative binomial distribution is a poisson-gamma mixture. Notice that a mean of 1 for $h$ corresponds to a mean of 0 for $\varepsilon$, i.e. we account for some extra zero-centered deviation around $\pmb x_i \pmb\beta$. To put this another way, for $y_i \sim \mathrm{poisson}(h_i\lambda_i)$, if $E[h_i] = 1$ then we can see that $E[y_i] = \lambda_i$. I.e. $E[h_i] = 1$ is the multiplicative equivalent of $E[\varepsilon] = 0$ in the additive case. This kind of mixing based on multiplicative heterogeneity which on average leaves the Poisson mean unchanged allows us to increase the variability in the Poisson mean, and in turn, the variability of the response. Intuitively this will lead to overdispersion and to increased probabilities of the occurrence of low counts and of high counts.
+
+Now we have our latent heterogeneity within the conditional mean of the Poisson model^[$y_i \sim \mathrm{poisson}(\lambda^*_i = h_i \lambda_i) \implies E[y_i|x_i, \varepsilon_i] = \exp(x_i\beta + \varepsilon_i) = \exp(x_i\beta)\exp(\varepsilon_i) = \lambda_i h_i.$] we can write the the conditional distribution $f(y_i|x_i, h_i) = \prod^n_{i=1}g(y_i | h_i\lambda_i)$ where $g$ is the probability density function of the $\mathrm{poisson}(h_i \lambda_i)$ (Gourieroux, 1984). However, since $\varepsilon$ is an unobserved variable, and therefore so is $h$, we must integrate $h$ out to obtain the conditional distribution of interest
+
+$$
+f(y_i|x_i) = P[Y=y_i | \pmb x_i] = \int 
+  \frac{\exp(-h_i\lambda_i)(h_i\lambda_i)^{y_i}}
+       {y_i!}\times
+  \frac{\theta^\theta \exp(-\theta h_i)h_i^{\theta - 1}}
+       {\Gamma(\theta)}dh_i
+$$
+
+We will spare the maths^[See Hilbe (2011) s8.2.1 for the full NB2 derivation.] and take for granted that we get
+
+$$
+\boxed{
+\begin{align}
+\textbf{Negative binomial (NB-2)}&: \quad y_i \sim \mathcal{NB}_2\left(\lambda_i \equiv \mu_i,\; \theta \equiv \alpha^{-1}\right) \\ \\
+\text{ A poisson-gamma mixture }& \text{with} \; y_i \sim \mathrm{poisson}(h_i \lambda_i) \text{ and } h_i \sim \mathrm{gamma}(\theta, \theta) .
+\\ \\ \\
+P[Y=y_i | \pmb x_i] 
+  &= \frac{\Gamma(y_i + \theta)}
+          {\Gamma(y_i + 1)\Gamma(\theta)}
+     \left(\frac{\theta}
+              {\theta + \mu_i}
+     \right)^\theta
+     \left(1- \frac{\theta}
+                  {\theta + \mu_i}
+     \right)^{y_i}\\ \\
+  &= \frac{\Gamma(y_i + 1/\alpha)}
+          {\Gamma(y_i + 1)\Gamma(1/\alpha)}
+     \left(\frac{1}
+                {\alpha\mu_i + 1}
+     \right)^{1/\alpha}
+     \left(1- \frac{1}
+                   {\alpha \mu_i + 1}
+     \right)^{y_i} \\ \\ \\
+E[y_i|\pmb x_i] &= \lambda_i = \mu_i = \exp(\pmb x_i\pmb\beta)\\ \\ \\
+\mathrm{Var}[y_i|\pmb x_i] 
+  &= \mu_i\left(\frac{\mu_i}{\theta} + 1 \right)\\
+  &= \mu_i\big(\alpha \mu_i + 1\big)\\ \\ \\
+\text{for } \; y_i \in \mathbb{Z}^{0+}, \; \theta > 0, \; \text{and }&\text{heterogeneity/overdispersion parameter } \alpha = 1/\theta > 0.\quad
+\end{align}
+}
+$$ {#eq-NB2}
+
+This is the NB-2 parameterization of the negative binomial model (named by CT, 1986 in reference to the quadratic exponent of $\mu$ in the conditional variance function) --- the standard parameterization for NB regression. Notice that this parameterization, resulting from the inclusion of a latent heterogeneity effect, relaxes the equidispersion restriction of the Poisson model while preserving the same conditional mean.
+
+The Poisson model is nested within the NB2 model as the boundary case when $\alpha = 0$. So is the geometric model when $\alpha = 1$. 
+
+The variance to mean ratio describes the 'extra-Poisson dispersion' (overdispersion). Here we have 
+$$
+\frac{\text{Variance}}{\text{Mean}} = \frac{\mu_i(\alpha\mu_i + 1)}{\mu_i} = \alpha\mu_i + 1
+$$
+
+Notice that the overdispersion depends on $i$, i.e. it is variable. This is why the NB2 parameterization is sometimes called the variable overdisperison NB. 
+
+
+::: {.callout-caution}
+### Different names for the same thing
+The negative binomial PMF is found in many different forms. $\lambda$ or $\mu$, $\alpha$ or $1/\theta$, $\alpha$ could be called $\phi$ and $\theta$ could be $\nu$. Some authors prefer to leave the gamma scale parameter, $\theta$, as it is. In this form the heterogeneity parameter ($\theta$) is inversely related to the amount of Poisson overdispersion in the data. Most contemporary statisticians, however, prefer a direct relationship. Hence the use of $\alpha = 1/\theta$.
+:::
+
+::: {.callout-note}
+### Summary
+Here we saw the Negative Binomial (NB-2 paramaterization) is a Poisson model with latent heterogeneity distributed as single-parameter gamma. This gamma noise overcomes the equidispersion limitation of the Poisson model, accomodating overdispersed or correlated counts through the addition of an overdispersion parameter in the NB variance, but still retain the same conditional mean. The distribution is parameterized by its mean $\mu_i = \lambda_i$ and heterogeneity parameter $\alpha$ (aka. overdispersion parameter) which is the inverse of the gamma noise parameter $\theta$. This parameterization is intuitive in the context of regression for overdispersed counts, however many other parameterizations exist.
+:::
+
+::: {.callout-tip}
+### Ponder
+Here we distributed our latent heterogeneity term as gamma. What is special about the gamma distribution? What would happen if we used a different distribution? The answers could be in Hilbe (2011).
+:::
+
+
+## Negative Binomial (NB-1) {#sec-NB1}
+
+The NB1 (aka linear NB, constant dispersion NB) is derived as a Poisson-gamma mixture model, however the manner of derivation differs from the traditional NB2 model. First derived by Evans (1953), it begins with the Poisson distribution
+
+$$
+y_i \sim \mathrm{Poisson}(\lambda_i); \quad 
+  P[Y = y_i | \lambda_i] = 
+  \frac{e^{-\lambda_i}\lambda_i^{y_i}}
+       {y_i!}
+$$
+
+For the NB1, we assume the Poisson parameter itself is distributed gamma as 
+
+$$
+\lambda_i \sim \mathrm{gamma}(\mu_i, \delta)
+$$
+
+where we assign the mean $\mu_i = \exp(\pmb x_i \pmb\beta)$ to the shape parameter, and $\delta$ is the scale parameter.^[If an offset is applied to the model, $\mu_i = \exp(\pmb x_i\pmb \beta) + \text{offset}$] ^[The gamma distribution can be expressed in terms of its shape parameter and either scale or rate parameter. The shape is commonly symboled $k$ or $\alpha$. The scale is commonly symboled $\theta$ and is the inverse of the rate parameter $\beta = 1/\theta$. Here, we assign $\mu_i$ to the shape, i.e. $k = \mu_i$ to derive the NB1 distribution. We will denote the scale parameter as $\delta$ to avoid confusion with the $\theta$ used in the NB2 derivation.] 
+
+
+
+::: {.callout-caution appearance="simple"}
+The above is shown as $Gamma(\delta, \mu_i)$ in multiple of Hilbe's textbooks, where delta is still the scale parameter and mu the shape. Is it Gamma(shape, scale) or Gamma(scale, shape)? 
+:::
+
+As such, the expected value of the Poisson parameter is $E[\lambda_i] = \mu_i/\delta$ and the variance is $\mathrm{Var}[\lambda_i] = \mu_i/\delta^2$. The resulting Poisson-gamma mixture, integrating out $\lambda$ can be defined as 
+
+$$
+f(y_i|\pmb x_i) = \int^\infty_0 
+  \frac{e^{-\lambda_i}\lambda_i^{y_i}}
+       {y_i!}
+  \frac{\delta^{\mu_i}\lambda_i^{\mu_i - 1}}
+       {\Gamma(\mu_i)}
+  \exp(-\lambda_i\delta) \; d\lambda
+$$
+
+Sparing the math^[See Hilbe (2011) s10.2.2 or Hilbe (2007) s13.1 for the full NB1 derivation.] we get
+
+$$
+\boxed{
+\begin{align}
+\textbf{Negative binomial (NB-1)}&: \quad y_i \sim \mathcal{NB}_1\left(\mu_i,\; \delta \equiv \alpha^{-1}\right) \\ \\
+P[Y=y_i | \pmb x_i] 
+  &= \frac{\Gamma(y_i + \mu_i)}
+          {\Gamma(y_i + 1)\Gamma(\mu_i)}
+     \left(\frac{\delta}
+                {\delta + 1}
+     \right)^{\mu_i}
+     \left(\frac{1}
+                   {\delta + 1}
+     \right)^{y_i} \\ \\
+  &= \frac{\Gamma(y_i + \mu_i)}
+          {\Gamma(y_i + 1)\Gamma(\mu_i)}
+     \left(\frac{1}
+                {\alpha + 1}
+     \right)^{\mu_i}
+     \left(\frac{\alpha}
+                {\alpha + 1}
+     \right)^{y_i} \\ \\ \\
+E[y_i|\pmb x_i] 
+  &= \frac{\exp(\pmb x_i\pmb\beta)}
+          {\delta}
+  = \frac{\mu_i} 
+          {\delta}  
+  =  \alpha \mu_i\\ \\
+\mathrm{Var}[y_i|\pmb x_i] 
+  &= \frac{\mu_i (\delta + 1)}
+          {\delta^2} 
+  =  \alpha\mu_i(\alpha + 1)\\ \\
+\text{for } \; y_i \in \mathbb{Z}^{0+}, \; \delta > 0, \; \text{and }&\text{ heterogeneity/overdispersion parameter } \alpha = 1/\theta > 0.\quad
+\end{align}
+}
+$$ {#eq-NB1}
+
+Again we have the nested Poisson model as the boundary case when $\alpha = 0$. 
+
+The variance to mean ratio, denoting the 'extra-Poisson dispersion' (i.e. overdispersion), is 
+
+$$
+\frac{\text{Variance}}{\text{Mean}} = \frac{\mu_i(\delta + 1)/\delta^2}{\mu_i/\delta} = \frac{\delta + 1}{\delta} = \alpha + 1
+$$
+
+Notice that unlike the NB2 parameterization, in which the overdispersion was variable, here the overdispersion is constant. This is why the NB1 is sometimes called the constant overdispersion NB.
+
+
+::: {.callout-note}
+### What's in a parameterization: NB2 vs. NB1 (CT, 1986)
+The parameterization of the NB model is determined by the parameterization of the gamma heterogeneity distribution. As such, the NB2 and NB1 parameterizations imply different assumptions about the functional form of heteroscedasticity --- a point which is not emphasized in the literature --- and hence in general will lead to different estimates of $\pmb\beta$. The two alternative specifications of the gamma heterogeneity distribution amount to different parameterizations in the univariate model, but where a regression component is present they lead to different models. This difference is also relevant when we consider the test of the null hypothesis that the distribution of Y is Poisson against the alternative that it is negative binomial.
+
+Note that for the intercept only model $\mu_i = \beta$ (i.e. no $x$ variables in the model), if observations are i.i.d., the specific NB parameterization and resulting difference in model form is of no consequence.
+:::

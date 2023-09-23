@@ -1,0 +1,65 @@
+# Intro
+
+
+## Not sure where to put...
+
+A GLM model contains 3 main components 
+
+1. The response distribution - we need to assume a distribution for the response variable $y_i$, e.g. $y_i \sim \mathrm{poisson}(\lambda_i)$. 
+
+2. The predictor function - a deterministic function of the covariates and model coefficients. 
+
+3. A link - between the expected value of the distribution and the predictor function. 
+
+Never start with overdispersion or zero-inflation models. First start simple (this is always the Poisson model for count data), fit and validate the simple model and then find solutions to problems. People often think that just because we have many zeros in our data we need to use, or should use, a zero-inflated model. This is not the case - we may have covariates which can explain the excess number of zeros.  
+
+The Poisson distribution is a maximum-entropy distribution (least informative).
+
+The log-link $\mu_i = \exp(\eta_i) = \exp(\pmb x_i\pmb\beta)$ ensures the the expected values are always positive. This is a nice restriction for count data.  
+
+Throughout this material we talk a lot about hetergeneity parameters, aka overdispersion parameters, aka dispersion parameters. This is not to be confused with the dispersion statistic 
+
+disp_stat_i = (observed data i - modelled expected value i)/sqrt(modelled var i)
+            = residual i / sqrt(var i)
+
+see SMS:ZIGLMAGLMM video @ 24:45. 
+
+
+
+
+
+
+
+## Extra-poisson dispersion
+
+For the poisson we have $E[y_i | \pmb x_i] = \mathrm{Var}[y_i | \pmb x_i]$. Models which account for 'extra-poisson dispersion' do so through the use of an extra parameter such that $E[y_i | \pmb x_i] = \phi\mathrm{Var}[y_i | \pmb x_i]$, for extra-poisson dispersion parameter $\phi$.
+
+
+
+
+
+
+
+
+
+
+## Resources/references
+
+* [Evans, 1953](https://doi.org/10.1093/biomet/40.1-2.186)
+* [Consul and Jain, 1973](https://doi.org/10.1080/00401706.1973.10489112)
+* [Bulmer, 1974](https://doi.org/10.2307/2529621)
+* [Janardan et al, 1979](https://doi.org/10.2307/1307766)
+* [Gourieroux, 1984](https://doi.org/10.2307/1913472)
+* [CT, 1986](https://doi.org/10.1002/jae.3950010104) 
+* [CT, 2013](https://doi.org/10.1017/CBO9781139013567)
+* [Consul and Famoye, 1992](https://doi.org/10.1080/03610929208830766)
+* [Joe and Zhu, 2005](https://doi.org/10.1002/bimj.200410102)
+* [Famoye and Singh, 2006](https://doi.org/10.6339/JDS.2006.04(1).257)
+* [Greene, 2008](https://doi.org/10.1016/j.econlet.2007.10.015)
+* [Winkelmann, 2008](https://doi.org/10.1007/978-3-540-78389-3)
+* [Hilbe, 2011](https://doi.org/10.1017/CBO9780511973420)
+* [Hardon and Hilbe, 2018](https://www.routledge.com/Generalized-Linear-Models-and-Extensions-Fourth-Edition/Hardin-Hilbe/p/book/9781597182256)
+
+
+* https://www.youtube.com/watch?v=uGKnoAw-PFQ 
+* [Statistical Methods Series: Zero-Inflated GLM and GLMM](https://www.youtube.com/watch?v=ISN9SE__QOU&t=909s)

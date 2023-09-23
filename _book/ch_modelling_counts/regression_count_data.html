@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.280">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>2&nbsp; Modelling counts</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../_lib/quarto-nav/quarto-nav.js"></script>
+<script src="../_lib/quarto-nav/headroom.min.js"></script>
+<script src="../_lib/clipboard/clipboard.min.js"></script>
+<script src="../_lib/quarto-search/autocomplete.umd.js"></script>
+<script src="../_lib/quarto-search/fuse.min.js"></script>
+<script src="../_lib/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../summary.html" rel="next">
+<link href="../intro.html" rel="prev">
+<script src="../_lib/quarto-html/quarto.js"></script>
+<script src="../_lib/quarto-html/popper.min.js"></script>
+<script src="../_lib/quarto-html/tippy.umd.min.js"></script>
+<script src="../_lib/quarto-html/anchor.min.js"></script>
+<link href="../_lib/quarto-html/tippy.css" rel="stylesheet">
+<link href="../_lib/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../_lib/bootstrap/bootstrap.min.js"></script>
+<link href="../_lib/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../_lib/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body class="nav-sidebar docked fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Modelling counts</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="../index.html" class="sidebar-logo-link">
+      <img src="../pics/manta_ray.gif" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Statistics UW</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ch_modelling_counts/regression_count_data.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Modelling counts</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../summary.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Summary</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">References</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Modelling counts</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="not-sure-where-to-put" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="not-sure-where-to-put"><span class="header-section-number">2.1</span> Not sure where to put…</h2>
+<p>A GLM model contains 3 main components</p>
+<ol type="1">
+<li><p>The response distribution - we need to assume a distribution for the response variable <span class="math inline">\(y_i\)</span>, e.g.&nbsp;<span class="math inline">\(y_i \sim \mathrm{poisson}(\lambda_i)\)</span>.</p></li>
+<li><p>The predictor function - a deterministic function of the covariates and model coefficients.</p></li>
+<li><p>A link - between the expected value of the distribution and the predictor function.</p></li>
+</ol>
+<p>Never start with overdispersion or zero-inflation models. First start simple (this is always the Poisson model for count data), fit and validate the simple model and then find solutions to problems. People often think that just because we have many zeros in our data we need to use, or should use, a zero-inflated model. This is not the case - we may have covariates which can explain the excess number of zeros.</p>
+<p>The Poisson distribution is a maximum-entropy distribution (least informative).</p>
+<p>The log-link <span class="math inline">\(\mu_i = \exp(\eta_i) = \exp(\pmb x_i\pmb\beta)\)</span> ensures the the expected values are always positive. This is a nice restriction for count data.</p>
+<p>Throughout this material we talk a lot about hetergeneity parameters, aka overdispersion parameters, aka dispersion parameters. This is not to be confused with the dispersion statistic</p>
+<p>disp_stat_i = (observed data i - modelled expected value i)/sqrt(modelled var i) = residual i / sqrt(var i)</p>
+<p>see SMS:ZIGLMAGLMM video @ 24:45.</p>
+</section>
+<section id="poisson" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="poisson"><span class="header-section-number">2.2</span> Poisson</h2>
+<p>For a regression model <span class="math inline">\(Y = \pmb\beta\pmb X + \epsilon_i\)</span>, the canonical likelihood function when <span class="math inline">\(Y\)</span> is a count variable is the Poisson (<span class="math inline">\(Y \sim Poisson(\lambda)\)</span>), with probability mass function</p>
+<p><span class="math display">\[
+P(Y = y_i |\pmb x_i) =
+  \frac{\exp(-\lambda_i)\lambda_i^{y_i}}
+       {\Gamma(1 + y_i)}
+\]</span></p>
+<p>for <span class="math inline">\(E(y_i|\pmb x_i) = \lambda_i = \mu_i = \exp(\pmb \beta \pmb x_i)\)</span> and <span class="math inline">\(Var(y_i | \pmb x_i) = \lambda_i\)</span>. The signature features of the Poisson model are its loglinear conditional mean function <span class="math inline">\(\log E(y_i|\pmb x_i) = \log \mu_i = \pmb \beta \pmb x_i\)</span> (the log of the conditional mean is linear in the parameters), and equal mean and variance <span class="math inline">\(Var(y_i | \pmb x_i) = \lambda_i\)</span> which is also called equidispersion since the dispersion <span class="math inline">\(\frac{\text{variance}}{\text{mean}} = 1\)</span>.</p>
+<p>However, Poisson models tend to be a poor fit in many ecological contexts due to overdispersion. Overdispersion arises naturally due to heterogeneity (e.g.&nbsp;as fish cluster in preferred habitats; as transient schooling species lead to some very large abundance observations), dependence between observations due to spatial and temporal autocorrelation (e.g.&nbsp;dependence of fish abundance within sites and years), and zero-inflation. It may also be due to artifacts of sampling and not measuring or controlling for key covariates influencing local patterns of fish abundance (e.g.&nbsp;time of day, tides, etc). The most popular distribution for overdispersed counts in ecological studies is the negative binomial (NB), which has been shown to appropriately model overdispersion in a range of ecological contexts (Stoklosa et al, 2022).</p>
+</section>
+<section id="extra-poisson-dispersion" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="extra-poisson-dispersion"><span class="header-section-number">2.3</span> Extra-poisson dispersion</h2>
+<p>For the poisson we have <span class="math inline">\(E[y_i | \pmb x_i] = \mathrm{Var}[y_i | \pmb x_i]\)</span>. Models which account for ‘extra-poisson dispersion’ do so through the use of an extra parameter such that <span class="math inline">\(E[y_i | \pmb x_i] = \phi\mathrm{Var}[y_i | \pmb x_i]\)</span>, for extra-poisson dispersion parameter <span class="math inline">\(\phi\)</span>.</p>
+</section>
+<section id="sec-NB2" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="sec-NB2"><span class="header-section-number">2.4</span> Negative Binomial (NB-2)</h2>
+<p>The derivation on the negative binomial NB2 is usually illustrated as a Poisson model with gamma heterogeneity, where the gamma noise has a mean of 1.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> An intuitive way to think of this is through the introduction of latent heterogeneity<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> (an unobserved effect) to the mean of the Poisson model (Greene, 2008).</p>
+<p>Recall our Poisson model of <span class="math inline">\(y_i \sim \mathrm{poisson}(\lambda_i)\)</span> for <span class="math inline">\(\lambda_i = \mu_i = \exp(\pmb x_i \pmb\beta)\)</span><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> which has the property of equidispersion since <span class="math inline">\(E[y_i | \pmb x_i] = \mathrm{Var}[y_i | \pmb x_i] = \lambda_i\)</span>. We will alter this poisson model to account for extra variance in our data, i.e.&nbsp;overdispersion <span class="math inline">\(\mathrm{Var}[y_i | \pmb x_i] &gt; E[y_i | \pmb x_i]\)</span>. We can imagine this extra variance stemming from observation-level deviations from the mean dues to an unobserved effect; we will refer to these deviations as latent heterogeneity. Let <span class="math inline">\(\varepsilon\)</span> represent this latent heterogeneity, then we can re-express the mean as <span class="math inline">\(\mu_i^* = \exp(\pmb x_i \pmb\beta + \varepsilon_i)\)</span>. Here <span class="math inline">\(\varepsilon\)</span> is its own random variable to which we will assign a probability distribution. Now define <span class="math inline">\(h_i = \exp(\varepsilon_i)\)</span> such that</p>
+<p><span class="math display">\[
+y_i \sim \mathrm{poisson}(h_i\lambda_i)
+\]</span></p>
+<p>This is a common step in the derivation of models for overdispersed counts, where the assumed distribution of <span class="math inline">\(h_i\)</span> leads to different models and parameterizations. For the negative binomial (NB2) model we assume that <span class="math inline">\(h_i\)</span> follows a single-parameter gamma distribution</p>
+<p><span class="math display">\[
+h_i \sim \mathrm{gamma}(k = \theta, \; \theta)
+\]</span></p>
+<p>with mean 1 and variance <span class="math inline">\(\alpha = 1/\theta\)</span>. The probability density of <span class="math inline">\(h_i\)</span> is then</p>
+<p><span class="math display">\[
+f(h_i) =
+  \frac{\theta^\theta \exp(-\theta h_i)h_i^{\theta - 1}}
+       {\Gamma(\theta)}
+  \; ;\;\; h_i \geq 0 ,\; \theta &gt; 0 \;.
+\]</span></p>
+<p>To put this in mathematical terms, the negative binomial distribution is a poisson-gamma mixture. Notice that a mean of 1 for <span class="math inline">\(h\)</span> corresponds to a mean of 0 for <span class="math inline">\(\varepsilon\)</span>, i.e.&nbsp;we account for some extra zero-centered deviation around <span class="math inline">\(\pmb x_i \pmb\beta\)</span>. To put this another way, for <span class="math inline">\(y_i \sim \mathrm{poisson}(h_i\lambda_i)\)</span>, if <span class="math inline">\(E[h_i] = 1\)</span> then we can see that <span class="math inline">\(E[y_i] = \lambda_i\)</span>. I.e. <span class="math inline">\(E[h_i] = 1\)</span> is the multiplicative equivalent of <span class="math inline">\(E[\varepsilon] = 0\)</span> in the additive case. This kind of mixing based on multiplicative heterogeneity which on average leaves the Poisson mean unchanged allows us to increase the variability in the Poisson mean, and in turn, the variability of the response. Intuitively this will lead to overdispersion and to increased probabilities of the occurrence of low counts and of high counts.</p>
+<p>Now we have our latent heterogeneity within the conditional mean of the Poisson model<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> we can write the the conditional distribution <span class="math inline">\(f(y_i|x_i, h_i) = \prod^n_{i=1}g(y_i | h_i\lambda_i)\)</span> where <span class="math inline">\(g\)</span> is the probability density function of the <span class="math inline">\(\mathrm{poisson}(h_i \lambda_i)\)</span> (Gourieroux, 1984). However, since <span class="math inline">\(\varepsilon\)</span> is an unobserved variable, and therefore so is <span class="math inline">\(h\)</span>, we must integrate <span class="math inline">\(h\)</span> out to obtain the conditional distribution of interest</p>
+<p><span class="math display">\[
+f(y_i|x_i) = P[Y=y_i | \pmb x_i] = \int
+  \frac{\exp(-h_i\lambda_i)(h_i\lambda_i)^{y_i}}
+       {y_i!}\times
+  \frac{\theta^\theta \exp(-\theta h_i)h_i^{\theta - 1}}
+       {\Gamma(\theta)}dh_i
+\]</span></p>
+<p>We will spare the maths<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> and take for granted that we get</p>
+<p><span id="eq-NB2"><span class="math display">\[
+\boxed{
+\begin{align}
+\textbf{Negative binomial (NB-2)}&amp;: \quad y_i \sim \mathcal{NB}_2\left(\lambda_i \equiv \mu_i,\; \theta \equiv \alpha^{-1}\right) \\ \\
+\text{ A poisson-gamma mixture }&amp; \text{with} \; y_i \sim \mathrm{poisson}(h_i \lambda_i) \text{ and } h_i \sim \mathrm{gamma}(\theta, \theta) .
+\\ \\ \\
+P[Y=y_i | \pmb x_i]
+  &amp;= \frac{\Gamma(y_i + \theta)}
+          {\Gamma(y_i + 1)\Gamma(\theta)}
+     \left(\frac{\theta}
+              {\theta + \mu_i}
+     \right)^\theta
+     \left(1- \frac{\theta}
+                  {\theta + \mu_i}
+     \right)^{y_i}\\ \\
+  &amp;= \frac{\Gamma(y_i + 1/\alpha)}
+          {\Gamma(y_i + 1)\Gamma(1/\alpha)}
+     \left(\frac{1}
+                {\alpha\mu_i + 1}
+     \right)^{1/\alpha}
+     \left(1- \frac{1}
+                   {\alpha \mu_i + 1}
+     \right)^{y_i} \\ \\ \\
+E[y_i|\pmb x_i] &amp;= \lambda_i = \mu_i = \exp(\pmb x_i\pmb\beta)\\ \\ \\
+\mathrm{Var}[y_i|\pmb x_i]
+  &amp;= \mu_i\left(\frac{\mu_i}{\theta} + 1 \right)\\
+  &amp;= \mu_i\big(\alpha \mu_i + 1\big)\\ \\ \\
+\text{for } \; y_i \in \mathbb{Z}^{0+}, \; \theta &gt; 0, \; \text{and }&amp;\text{heterogeneity/overdispersion parameter } \alpha = 1/\theta &gt; 0.\quad
+\end{align}
+}
+\tag{2.1}\]</span></span></p>
+<p>This is the NB-2 parameterization of the negative binomial model (named by CT, 1986 in reference to the quadratic exponent of <span class="math inline">\(\mu\)</span> in the conditional variance function) — the standard parameterization for NB regression. Notice that this parameterization, resulting from the inclusion of a latent heterogeneity effect, relaxes the equidispersion restriction of the Poisson model while preserving the same conditional mean.</p>
+<p>The Poisson model is nested within the NB2 model as the boundary case when <span class="math inline">\(\alpha = 0\)</span>. So is the geometric model when <span class="math inline">\(\alpha = 1\)</span>.</p>
+<p>The variance to mean ratio describes the ‘extra-Poisson dispersion’ (overdispersion). Here we have <span class="math display">\[
+\frac{\text{Variance}}{\text{Mean}} = \frac{\mu_i(\alpha\mu_i + 1)}{\mu_i} = \alpha\mu_i + 1
+\]</span></p>
+<p>Notice that the overdispersion depends on <span class="math inline">\(i\)</span>, i.e.&nbsp;it is variable. This is why the NB2 parameterization is sometimes called the variable overdisperison NB.</p>
+<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Different names for the same thing
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The negative binomial PMF is found in many different forms. <span class="math inline">\(\lambda\)</span> or <span class="math inline">\(\mu\)</span>, <span class="math inline">\(\alpha\)</span> or <span class="math inline">\(1/\theta\)</span>, <span class="math inline">\(\alpha\)</span> could be called <span class="math inline">\(\phi\)</span> and <span class="math inline">\(\theta\)</span> could be <span class="math inline">\(\nu\)</span>. Some authors prefer to leave the gamma scale parameter, <span class="math inline">\(\theta\)</span>, as it is. In this form the heterogeneity parameter (<span class="math inline">\(\theta\)</span>) is inversely related to the amount of Poisson overdispersion in the data. Most contemporary statisticians, however, prefer a direct relationship. Hence the use of <span class="math inline">\(\alpha = 1/\theta\)</span>.</p>
+</div>
+</div>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Summary
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Here we saw the Negative Binomial (NB-2 paramaterization) is a Poisson model with latent heterogeneity distributed as single-parameter gamma. This gamma noise overcomes the equidispersion limitation of the Poisson model, accomodating overdispersed or correlated counts through the addition of an overdispersion parameter in the NB variance, but still retain the same conditional mean. The distribution is parameterized by its mean <span class="math inline">\(\mu_i = \lambda_i\)</span> and heterogeneity parameter <span class="math inline">\(\alpha\)</span> (aka. overdispersion parameter) which is the inverse of the gamma noise parameter <span class="math inline">\(\theta\)</span>. This parameterization is intuitive in the context of regression for overdispersed counts, however many other parameterizations exist.</p>
+</div>
+</div>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Ponder
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Here we distributed our latent heterogeneity term as gamma. What is special about the gamma distribution? What would happen if we used a different distribution? The answers could be in Hilbe (2011).</p>
+</div>
+</div>
+</section>
+<section id="sec-NB1" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="sec-NB1"><span class="header-section-number">2.5</span> Negative Binomial (NB-1)</h2>
+<p>The NB1 (aka linear NB, constant dispersion NB) is derived as a Poisson-gamma mixture model, however the manner of derivation differs from the traditional NB2 model. First derived by Evans (1953), it begins with the Poisson distribution</p>
+<p><span class="math display">\[
+y_i \sim \mathrm{Poisson}(\lambda_i); \quad
+  P[Y = y_i | \lambda_i] =
+  \frac{e^{-\lambda_i}\lambda_i^{y_i}}
+       {y_i!}
+\]</span></p>
+<p>For the NB1, we assume the Poisson parameter itself is distributed gamma as</p>
+<p><span class="math display">\[
+\lambda_i \sim \mathrm{gamma}(\mu_i, \delta)
+\]</span></p>
+<p>where we assign the mean <span class="math inline">\(\mu_i = \exp(\pmb x_i \pmb\beta)\)</span> to the shape parameter, and <span class="math inline">\(\delta\)</span> is the scale parameter.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> <a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></p>
+<div class="callout-caution callout callout-style-simple">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>The above is shown as <span class="math inline">\(Gamma(\delta, \mu_i)\)</span> in multiple of Hilbe’s textbooks, where delta is still the scale parameter and mu the shape. Is it Gamma(shape, scale) or Gamma(scale, shape)?</p>
+</div>
+</div>
+</div>
+<p>As such, the expected value of the Poisson parameter is <span class="math inline">\(E[\lambda_i] = \mu_i/\delta\)</span> and the variance is <span class="math inline">\(\mathrm{Var}[\lambda_i] = \mu_i/\delta^2\)</span>. The resulting Poisson-gamma mixture, integrating out <span class="math inline">\(\lambda\)</span> can be defined as</p>
+<p><span class="math display">\[
+f(y_i|\pmb x_i) = \int^\infty_0
+  \frac{e^{-\lambda_i}\lambda_i^{y_i}}
+       {y_i!}
+  \frac{\delta^{\mu_i}\lambda_i^{\mu_i - 1}}
+       {\Gamma(\mu_i)}
+  \exp(-\lambda_i\delta) \; d\lambda
+\]</span></p>
+<p>Sparing the math<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a> we get</p>
+<p><span id="eq-NB1"><span class="math display">\[
+\boxed{
+\begin{align}
+\textbf{Negative binomial (NB-1)}&amp;: \quad y_i \sim \mathcal{NB}_1\left(\mu_i,\; \delta \equiv \alpha^{-1}\right) \\ \\
+P[Y=y_i | \pmb x_i]
+  &amp;= \frac{\Gamma(y_i + \mu_i)}
+          {\Gamma(y_i + 1)\Gamma(\mu_i)}
+     \left(\frac{\delta}
+                {\delta + 1}
+     \right)^{\mu_i}
+     \left(\frac{1}
+                   {\delta + 1}
+     \right)^{y_i} \\ \\
+  &amp;= \frac{\Gamma(y_i + \mu_i)}
+          {\Gamma(y_i + 1)\Gamma(\mu_i)}
+     \left(\frac{1}
+                {\alpha + 1}
+     \right)^{\mu_i}
+     \left(\frac{\alpha}
+                {\alpha + 1}
+     \right)^{y_i} \\ \\ \\
+E[y_i|\pmb x_i]
+  &amp;= \frac{\exp(\pmb x_i\pmb\beta)}
+          {\delta}
+  = \frac{\mu_i}
+          {\delta}  
+  =  \alpha \mu_i\\ \\
+\mathrm{Var}[y_i|\pmb x_i]
+  &amp;= \frac{\mu_i (\delta + 1)}
+          {\delta^2}
+  =  \alpha\mu_i(\alpha + 1)\\ \\
+\text{for } \; y_i \in \mathbb{Z}^{0+}, \; \delta &gt; 0, \; \text{and }&amp;\text{ heterogeneity/overdispersion parameter } \alpha = 1/\theta &gt; 0.\quad
+\end{align}
+}
+\tag{2.2}\]</span></span></p>
+<p>Again we have the nested Poisson model as the boundary case when <span class="math inline">\(\alpha = 0\)</span>.</p>
+<p>The variance to mean ratio, denoting the ‘extra-Poisson dispersion’ (i.e.&nbsp;overdispersion), is</p>
+<p><span class="math display">\[
+\frac{\text{Variance}}{\text{Mean}} = \frac{\mu_i(\delta + 1)/\delta^2}{\mu_i/\delta} = \frac{\delta + 1}{\delta} = \alpha + 1
+\]</span></p>
+<p>Notice that unlike the NB2 parameterization, in which the overdispersion was variable, here the overdispersion is constant. This is why the NB1 is sometimes called the constant overdispersion NB.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+What’s in a parameterization: NB2 vs.&nbsp;NB1 (CT, 1986)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The parameterization of the NB model is determined by the parameterization of the gamma heterogeneity distribution. As such, the NB2 and NB1 parameterizations imply different assumptions about the functional form of heteroscedasticity — a point which is not emphasized in the literature — and hence in general will lead to different estimates of <span class="math inline">\(\pmb\beta\)</span>. The two alternative specifications of the gamma heterogeneity distribution amount to different parameterizations in the univariate model, but where a regression component is present they lead to different models. This difference is also relevant when we consider the test of the null hypothesis that the distribution of Y is Poisson against the alternative that it is negative binomial.</p>
+<p>Note that for the intercept only model <span class="math inline">\(\mu_i = \beta\)</span> (i.e.&nbsp;no <span class="math inline">\(x\)</span> variables in the model), if observations are i.i.d., the specific NB parameterization and resulting difference in model form is of no consequence.</p>
+</div>
+</div>
+</section>
+<section id="sec-GenPois" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="sec-GenPois"><span class="header-section-number">2.6</span> Generalized Poisson</h2>
+<p>When there is overdispersion due to latent heterogeneity, people often assume a gamma mixture of poisson variables. Suppose that is <span class="math inline">\(\varepsilon_i\)</span> is an unobserved individual heterogeneity factor (e.g.&nbsp;an unobserved covariate), with <span class="math inline">\(\exp(\varepsilon)\)</span> following a gamma distribution with mean 1 (i.e.&nbsp;single parameter gamma distribution) and variance <span class="math inline">\(\alpha\)</span>. Now assume the response vector follows a modification of the Poisson model with mean <span class="math inline">\(\lambda^*_i = \exp(\pmb x_i \pmb\beta + \varepsilon_i)\)</span>. The result is the well-known negative binomial regression model where <span class="math inline">\(\alpha\)</span> is a nonnegative parameter, indicating the degree of overdispersion.</p>
+<p>As alternative to the negative binomial for overdispersed counts we may assume the response follows a generalized poisson (GP) distribution. Originally developed by Consul and Jain (1973), it has since undergone various modifications (the <em>restricted generalized Poisson</em>, three parameterizations of a <em>hybrid generalized Poisson</em>, etc).</p>
+<p>The generalized poisson model is similar to the negative binomial in that it incorporates an extra heterogeneity parameter.<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a> However, whereas the negative binomial hetergeneity parameter (<span class="math inline">\(\alpha\)</span>) is based on the single-parameter gamma distribution (NB2 parameterization; <a href="#sec-NB2"><span>Section&nbsp;2.4</span></a>), the heterogeneity parameter employed by the generalized poisson is based on the lognormal distribution.<a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a> This allows modelling of both overdispersed ?<em>and</em> underdispersed data?.</p>
+<p>There are several different models that are referred to as generalized poisson models.</p>
+<hr>
+<p>The standard parameterization comes from Consul (1989) (detailed in Consul and Famoye, 1992; shown to be a poisson mixture in Joe and Zhu, 2005). In Consul and Famoye (1992) the model is specified to deal with underdispersion to some degree, however it seems like this parameterization has been restricted to overdispersion only (<span class="math inline">\(\delta &gt; 0\)</span>) in later works (see Joe and Zhu, 2005).</p>
+<!-- **CREATE MULTIPLE TABS: ONE FOR DISTRIBUTION DEFINITION AND ONE FOR THE MODEL FORM (see Consul and Famoye 1992)** -->
+<p><span id="eq-GP1Dist"><span class="math display">\[
+\boxed{
+  \begin{align}
+    \textbf{Generalized poisson} &amp; \text{ (Consul, 1989)}: \quad
+    y_i \sim \mathrm{GenPois}(\theta_i, \delta)
+    \\\\
+    P[Y = y_i | \pmb x_i, \pmb\beta]
+      &amp;= \theta_i(\theta_i + \delta y_i)^{y_i - 1}
+         \frac{\exp(-\theta_i-\delta y_i)}
+              {y!} \\ \\
+    E[Y_i|\theta_i, \delta]
+      &amp;= \mu_i = \frac{\theta_i}
+                      {1-\delta} \\ \\
+    \mathrm{Var}(Y_i | \theta_i, \delta)
+      &amp;= \frac{\theta_i}
+              {(1-\delta)^3} \\ \\
+      &amp;= \frac{1}
+              {(1-\delta)^2} E[y_i] \\ \\
+      &amp;= \phi E[y_i]\\ \\
+  \text{ for } \; y_i \in \mathbb{Z}^{0+}, \;\; \theta_i &gt; 0, \;\; &amp; \max(-1, -\theta_i/4) &lt; \delta &lt; 1, \; \text{and}\\
+  \text{overdispersion parame}&amp;\text{ter } \phi = 1/(1-\delta)^2.\quad
+  \end{align}
+}
+\tag{2.3}\]</span></span></p>
+<p>When <span class="math inline">\(\delta = 0 \;\Leftrightarrow\; \phi = 1\)</span> the GP reduces to the nested Poisson distribution with parameter <span class="math inline">\(\theta_i\)</span>. When <span class="math inline">\(\delta &lt; 0 \;\Leftrightarrow\; \phi &lt; 1\)</span> we have underdispersion and for <span class="math inline">\(\delta &gt; 0 \;\Leftrightarrow\; \phi &gt; 1\)</span> we have overdispersion.</p>
+<p>Consol (1989) introduce covariates into a regression model based on the GP distirbution via</p>
+<p><span class="math display">\[
+E[y_i] = \frac{\theta_i}{1-\delta} = \mu_i = \exp(\pmb x_i\pmb\beta)
+\]</span></p>
+<p>Under this parameterization the corresponding GP regression model is obtained by subbing <span class="math inline">\(\theta_i = (1-\delta)\mu_i\)</span> into <a href="#eq-GP1Dist">Equation&nbsp;<span>2.3</span></a> to get <span class="math display">\[
+P(Y = y_i | \pmb x_i, \pmb \beta, \delta)
+  = \frac{(1-\delta)\mu_i \big[(1 - \delta)\mu_i + \delta y_i \big]^{y_i - 1} \exp\big(-(1-\delta)\mu_i - \delta y_i \big)}{y!}
+\]</span></p>
+<p>for <span class="math inline">\(\mu_i &gt; 0\)</span>, <span class="math inline">\(\max(-1, -\theta_i/4) &lt; \delta \leq 1\)</span> and <span class="math inline">\(E[y_i] = \mu_i = \exp(\pmb x_i\pmb\beta)\)</span> (Yang, 2007).</p>
+<!-- See Yang (2007) eq6 -->
+<!-- In Consul and Famoye (1992) they use $\lambda$ as the overdispersion parameter and $\theta = \exp(\pmb x_i\pmb\beta)$. In Hardin and Hilbe (2018) they use $\delta$ for the overdispersion parameter. Here we will use $\lambda_i = \mu_i = \exp(\pmb x_i\pmb\beta)$ and $\alpha$ for the overdispersion parameter.  -->
+<div class="callout-warning callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Wrong generalized poisson definition in Hilbe (2011)?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The below is from Hilbe (2011). Note that this is a different definition to that used in Consul and Famoye (1992), Joe and Zhu (2005), and Hardin and Hilbe (2018). Is this an error? Perhaps there is equality between the two and I just don’t see it. I will steer clear of the Hilbe (2011) definition.</p>
+<p><img src="resources/potential_error_Hilbe_2011_NegBinReg_at_genpoisson_definition.PNG" class="img-fluid"></p>
+</div>
+</div>
+</div>
+<p>The value <span class="math inline">\(\theta\)</span> serves as the heterogeneity parameter, analogous to the negative binomial heterogeneity parameter <span class="math inline">\(\alpha\)</span>, and reflects the amount of ‘extra-poisson’ dispersion in the data. As with the NB <span class="math inline">\(\alpha\)</span>, as <span class="math inline">\(\theta\)</span> approaches zero this parameterization reduces to the Poisson distribution.</p>
+<hr>
+<p>Another well-known parameterization is given in Famoye and Singh (2006) and Winkelmann (2008).</p>
+<p><span class="math display">\[
+\boxed{
+  \begin{align}
+    \textbf{Generalized poisson} &amp; \text{ - Famoye and Singh (2006) parameterization} \\ \\
+    P[Y = y_i | \mu_i, \alpha]
+      &amp;= \left(
+            \frac{\mu_i}
+                 {\alpha\mu_i + 1}
+          \right)^{y_i}
+          \left(
+            \frac{(\alpha y_i + 1)^{y_i - 1}}
+                 {y!}
+          \right)
+          \exp\left(
+            \frac{-\mu_i(\alpha y_i + 1)}
+                 {\alpha \mu_i + 1}
+          \right)
+    \\ \\
+    E[y_i|\mu_i, \alpha]
+      &amp;= \mu_i \\ \\
+    \mathrm{Var}[y_i | \mu_i, \alpha]
+      &amp;= \mu_i(1 - \alpha\mu_i)^2 \\ \\
+  \text{for heterogeneity }&amp;\text{parameter } \alpha.
+  \end{align}
+}
+\]</span></p>
+<p>for heterogeneity parameter <span class="math inline">\(\alpha\)</span>. Again, as <span class="math inline">\(\alpha \to 0\)</span>, this generalized Poisson distribution is reduced to the Poisson.</p>
+</section>
+<section id="summary-1" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="summary-1"><span class="header-section-number">2.7</span> Summary</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>col_names <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Family"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Parameterization"</span>, </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Heterogeneity parameter"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Nested models"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Extra-poisson dispersion"</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> <span class="fu">data.frame</span>() <span class="sc">|&gt;</span>  </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(<span class="fu">c</span>(</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Negative Binomial"</span>, </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"NB2"</span>, </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="sc">\\</span><span class="st">alpha"</span>, </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Poisson ($</span><span class="sc">\\</span><span class="st">alpha = 0)"</span>, </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  )) </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add more rows here</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(tab) <span class="ot">&lt;-</span> col_names</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="resourcesreferences" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="resourcesreferences"><span class="header-section-number">2.8</span> Resources/references</h2>
+<ul>
+<li><p><a href="https://doi.org/10.1093/biomet/40.1-2.186">Evans, 1953</a></p></li>
+<li><p><a href="https://doi.org/10.1080/00401706.1973.10489112">Consul and Jain, 1973</a></p></li>
+<li><p><a href="https://doi.org/10.2307/2529621">Bulmer, 1974</a></p></li>
+<li><p><a href="https://doi.org/10.2307/1307766">Janardan et al, 1979</a></p></li>
+<li><p><a href="https://doi.org/10.2307/1913472">Gourieroux, 1984</a></p></li>
+<li><p><a href="https://doi.org/10.1002/jae.3950010104">CT, 1986</a></p></li>
+<li><p><a href="https://doi.org/10.1017/CBO9781139013567">CT, 2013</a></p></li>
+<li><p><a href="https://doi.org/10.1080/03610929208830766">Consul and Famoye, 1992</a></p></li>
+<li><p><a href="https://doi.org/10.1002/bimj.200410102">Joe and Zhu, 2005</a></p></li>
+<li><p><a href="https://doi.org/10.6339/JDS.2006.04(1).257">Famoye and Singh, 2006</a></p></li>
+<li><p><a href="https://doi.org/10.1016/j.econlet.2007.10.015">Greene, 2008</a></p></li>
+<li><p><a href="https://doi.org/10.1007/978-3-540-78389-3">Winkelmann, 2008</a></p></li>
+<li><p><a href="https://doi.org/10.1017/CBO9780511973420">Hilbe, 2011</a></p></li>
+<li><p><a href="https://www.routledge.com/Generalized-Linear-Models-and-Extensions-Fourth-Edition/Hardin-Hilbe/p/book/9781597182256">Hardon and Hilbe, 2018</a></p></li>
+<li><p>https://www.youtube.com/watch?v=uGKnoAw-PFQ</p></li>
+<li><p><a href="https://www.youtube.com/watch?v=ISN9SE__QOU&amp;t=909s">Statistical Methods Series: Zero-Inflated GLM and GLMM</a></p></li>
+</ul>
+
+
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>The mean of one is for technical reasons, see Hilbe (2007) s13.2.1.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Latent <em>def (adjective)</em> something which is not directly observed but is instead inferred.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>The use of the exponential function in <span class="math inline">\(\mu_i = \exp(\pmb x_i \pmb\beta)\)</span> restricts the outcomes to positive counts.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><span class="math inline">\(y_i \sim \mathrm{poisson}(\lambda^*_i = h_i \lambda_i) \implies E[y_i|x_i, \varepsilon_i] = \exp(x_i\beta + \varepsilon_i) = \exp(x_i\beta)\exp(\varepsilon_i) = \lambda_i h_i.\)</span><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>See Hilbe (2011) s8.2.1 for the full NB2 derivation.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>If an offset is applied to the model, <span class="math inline">\(\mu_i = \exp(\pmb x_i\pmb \beta) + \text{offset}\)</span><a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>The gamma distribution can be expressed in terms of its shape parameter and either scale or rate parameter. The shape is commonly symboled <span class="math inline">\(k\)</span> or <span class="math inline">\(\alpha\)</span>. The scale is commonly symboled <span class="math inline">\(\theta\)</span> and is the inverse of the rate parameter <span class="math inline">\(\beta = 1/\theta\)</span>. Here, we assign <span class="math inline">\(\mu_i\)</span> to the shape, i.e.&nbsp;<span class="math inline">\(k = \mu_i\)</span> to derive the NB1 distribution. We will denote the scale parameter as <span class="math inline">\(\delta\)</span> to avoid confusion with the <span class="math inline">\(\theta\)</span> used in the NB2 derivation.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p>See Hilbe (2011) s10.2.2 or Hilbe (2007) s13.1 for the full NB1 derivation.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn9"><p>Heterogeneity parameter <em>a.k.a.</em> overdispersion parameter, dispersion parameter.<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn10"><p>This type of poisson-lognormal mixture model was first used in species abundance literature (Bulmer ,1974). See Janardan et al (1979) for biological applications of the generalized (Lagrangian) poisson distribution as well as some biological interpretations of the hetergeneity parameter. Other examples are given in Consul (1989).<a href="#fnref10" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../intro.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../summary.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Summary</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
