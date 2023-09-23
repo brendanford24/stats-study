@@ -1,3 +1,5 @@
+
+ /* =====> CUSTOM CLASSES */
 .hidden {
   visibility: collapse;
 }
@@ -5,3 +7,39 @@
 .titletext {
   font-family: monospace;
 }
+/* <===== */
+
+
+/* =====> QUARTO CLASSES */
+.sidebar{
+  font-family: yomogi;
+}
+.math.inline {
+  font-size: 110% !important;
+  font-family: notosans-math;
+}
+/* <===== */
+
+
+/* =====> FONTS */
+@font-face {
+  font-family: yomogi;
+  src: url(fonts/Yomogi/Yomogi-Regular.ttf);
+}
+@font-face {
+  font-family: kleeone;
+  src: url(fonts/Klee_One/KleeOne-Regular.ttf);
+}
+@font-face {
+  font-family: kleeone-semibold;
+  src: url(fonts/Klee_One/KleeOne-SemiBold.ttf);
+}
+@font-face {
+  font-family: dotgothic16;
+  src: url(fonts/DotGothic16/DotGothic16-Regular.ttf);
+}
+@font-face {
+  font-family: notosans-math;
+  src: url(fonts/Noto_Sans_Math/NotoSansMath-Regular.ttf);
+}
+/* <===== */
