@@ -1,0 +1,14 @@
+{
+  "hash": "8f6a913e5d7904ac8c664ea97aa4abce",
+  "result": {
+    "markdown": "# Preface {.unnumbered}\n\n\n::: {.cell}\n\n```{.r .cell-code}\nknitr::include_graphics(\"pics/manta_ray.gif\")\n```\n\n::: {.cell-output-display}\n![](pics/manta_ray.gif)\n:::\n:::\n\n\n\nThis is a Quarto book.\n\nTo learn more about Quarto books visit <https://quarto.org/docs/books>.\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

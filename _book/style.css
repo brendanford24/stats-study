@@ -1,0 +1,7 @@
+.hidden {
+  visibility: collapse;
+}
+
+.titletext {
+  font-family: monospace;
+}

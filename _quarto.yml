@@ -1,0 +1,37 @@
+# See https://quarto.org/docs/reference/projects/books.html for list of options
+project:
+  type: book
+  output-dir: _book
+  lib-dir: _lib
+toc: false
+book:
+  # title: ""
+  # author: "Brendan"
+  # date: "9/23/2023"
+  # cover-image: pics/manta_ray.gif
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - summary.qmd
+    - references.qmd
+  # margin-header: "![](pics/manta_ray.gif)"
+  # navbar:
+    # title:
+    # logo: pics/manta_ray.gif
+  sidebar: 
+    # title:
+    logo: pics/manta_ray.gif
+    style: docked
+    # tools: 
+    #   - icon: github
+    #     href: https://github.com/brendanford24/stats-study.git
+    
+bibliography: references.bib
+format:
+  html:
+    mainfont: monospace
+    css: style.css
+    theme: cosmo
+  # pdf:
+    # documentclass: scrreprt
+
