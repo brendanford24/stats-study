@@ -11,8 +11,23 @@
 
 
 /* =====> QUARTO CLASSES */
+body {
+  text-align: justify;
+}
+.page-columns .content {
+  margin-left: 5%;
+  margin-right: 5%;
+}
+#quarto-sidebar {
+  width: 125%;
+  margin-right: 120%;
+}
+/* #quarto-content {
+  align-content: center;
+} */
 .sidebar{
   font-family: yomogi;
+  text-align: left;
 }
 .math.inline {
   font-size: 110% !important;
