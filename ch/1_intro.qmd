@@ -2,15 +2,6 @@
 
 
 
-```{r}
-library(tidyverse)
-y <- rpois(100, 3)
-x <- y + rnorm(100, 0, 10)
-data.frame(y = y, x = x) |> 
-  ggplot(aes(x, y)) + 
-  geom_point()
-```
-
 
 
 
